@@ -1,1 +1,69 @@
-#GitPage
+<script>
+    let touchImage = null; // 현재 터치 중인 이미지
+    let touchOffsetX = 0; // 터치 시작 시 이미지의 X 좌표 차이
+    let touchOffsetY = 0; // 터치 시작 시 이미지의 Y 좌표 차이
+
+    // 터치 시작 이벤트
+    function touchStart(event) {
+        const touch = event.touches[0];
+        const target = event.target;
+
+        if (target.tagName === "IMG" && target.parentElement.id === "image-pool") {
+            touchImage = target.cloneNode(true); // 이미지를 복제
+            touchImage.style.position = "absolute";
+            touchImage.style.zIndex = "1000";
+            touchImage.style.width = "100px";
+            touchImage.style.height = "100px";
+            document.body.appendChild(touchImage);
+
+            const rect = target.getBoundingClientRect();
+            touchOffsetX = touch.clientX - rect.left;
+            touchOffsetY = touch.clientY - rect.top;
+
+            moveTouchImage(touch.clientX, touch.clientY);
+        }
+    }
+
+    // 터치 이동 이벤트
+    function touchMove(event) {
+        event.preventDefault();
+        if (touchImage) {
+            const touch = event.touches[0];
+            moveTouchImage(touch.clientX, touch.clientY);
+        }
+    }
+
+    // 터치 이동에 따른 이미지 위치 변경
+    function moveTouchImage(x, y) {
+        if (touchImage) {
+            touchImage.style.left = `${x - touchOffsetX}px`;
+            touchImage.style.top = `${y - touchOffsetY}px`;
+        }
+    }
+
+    // 터치 끝 이벤트
+    function touchEnd(event) {
+        if (touchImage) {
+            const dropBox = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+
+            if (dropBox && dropBox.classList.contains("drop-box") && !dropBox.hasChildNodes()) {
+                dropBox.appendChild(touchImage); // 드롭 박스로 이동
+                touchImage.style.position = "static";
+                touchImage.style.zIndex = "";
+                touchImage = null;
+            } else {
+                // 실패 시 이미지 제거
+                document.body.removeChild(touchImage);
+                touchImage = null;
+            }
+        }
+    }
+
+    // 이벤트 리스너 추가
+    window.onload = function () {
+        const imagePool = document.getElementById('image-pool');
+        imagePool.addEventListener('touchstart', touchStart, { passive: false });
+        document.addEventListener('touchmove', touchMove, { passive: false });
+        document.addEventListener('touchend', touchEnd);
+    };
+</script>
