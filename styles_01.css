@@ -44,16 +44,9 @@ h1 {
 }
 
 .image-pool img {
-    width: 50px; /* 이미지 크기 고정 */
-    height: 50px; /* 이미지 크기 고정 */
+    width: 50px;
+    height: 50px;
     cursor: grab;
-    touch-action: none; /* 터치 동작 기본값 비활성화 */
-}
-
-/* 터치 중 이미지 이동 스타일 */
-.image-pool img:active {
-    width: 50px; /* 터치 중에도 크기 유지 */
-    height: 50px; /* 터치 중에도 크기 유지 */
 }
 
 /* 버튼 설정 */
